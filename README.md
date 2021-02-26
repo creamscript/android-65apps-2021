@@ -1,3 +1,5 @@
+[![lang](https://img.shields.io/badge/lang-kotlin-orange)](https://kotlinlang.org/docs/home.html)
+
 # Курс по Android-разработке от 65apps
 
 https://65apps.com/education
@@ -26,3 +28,5 @@ https://65apps.com/education
 - Задание в classroom сдается с прикрепленной ссылкой на PR
 
 Сливать ветку с ДЗ в main самому не надо. Один из списка проверяющих посмотрит PR (они должны быть перечислены в collaborators). И либо оставит замечания либо вмержит.
+
+[ДЗ-1 Создать проект на GitHub](course-files/hw1-create-project-on-github.md)
