@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Android 65apps 2021</string>
+    <string name="title_contact_list">Список контактов</string>
+    <string name="title_contact_details">Детали контакта</string>
+    <string name="name">Contact Name</string>
+    <string name="phone_first">Phone Number #1</string>
+    <string name="phone_second">Phone Number #2</string>
+    <string name="email_first">Email #1</string>
+    <string name="email_second">Email #2</string>
+    <string name="description">Description</string>
 </resources>

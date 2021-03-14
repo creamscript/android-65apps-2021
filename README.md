@@ -1,5 +1,3 @@
-[![lang](https://img.shields.io/badge/lang-kotlin-orange)](https://kotlinlang.org/docs/home.html)
-
 # Курс по Android-разработке от 65apps
 
 https://65apps.com/education
@@ -7,7 +5,7 @@ https://65apps.com/education
 ## Курс состоит из 12 лекций 
 
 1. Основы ОС Android. Жизнь и смерть приложения
-1. Компоненты пользовательского интерфейса в Android
+1. Компоненты пользовательского интерфейса в Android (Activity, Fragments)
 1. Service
 1. BroadcastReceiver
 1. ContentProvider
@@ -30,3 +28,5 @@ https://65apps.com/education
 Сливать ветку с ДЗ в main самому не надо. Один из списка проверяющих посмотрит PR (они должны быть перечислены в collaborators). И либо оставит замечания либо вмержит.
 
 [ДЗ-1 Создать проект на GitHub](course-files/hw1-create-project-on-github.md)
+
+[ДЗ-2 Список контактов и детали контакта (Только верстка и навигация)](course-files/hw2-make-contact-layout.md)
