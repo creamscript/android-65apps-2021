@@ -1,17 +1,54 @@
 package com.creamscript.bulychev
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
-class MainActivity : AppCompatActivity(), ContactSelectable {
+class MainActivity : AppCompatActivity(), ContactSelectable, ContactService.IService
+{
+    private var contactService : ContactService? = null
+    private var bound = false
+    private var isCreateMainFragment = false
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            bound = false
+        }
+
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as ContactService.ContactBinder
+            contactService = binder.getService()
+            bound = true
+
+            if(isCreateMainFragment) {
+                openContactList(R.id.fragment_container, ContactListFragment())
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState  == null)
-            openContactList(R.id.fragment_container, ContactListFragment())
+        isCreateMainFragment = savedInstanceState  == null
+
+        val intent = Intent(this, ContactService::class.java)
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onDestroy() {
+        if(bound) {
+            unbindService(connection)
+            bound = false
+        }
+        contactService = null
+        super.onDestroy()
     }
 
     override fun contactSelected(id: String) {
@@ -32,4 +69,6 @@ class MainActivity : AppCompatActivity(), ContactSelectable {
                 .addToBackStack(null)
                 .commit()
     }
+
+    override fun getService() = contactService
 }
