@@ -30,3 +30,5 @@ https://65apps.com/education
 [ДЗ-1 Создать проект на GitHub](course-files/hw1-create-project-on-github.md)
 
 [ДЗ-2 Список контактов и детали контакта (Только верстка и навигация)](course-files/hw2-make-contact-layout.md)
+
+[ДЗ-3 Выделить привязанный сервис для загрузки списка контактов](course-files/hw3-bind-service-contact-list.md)
