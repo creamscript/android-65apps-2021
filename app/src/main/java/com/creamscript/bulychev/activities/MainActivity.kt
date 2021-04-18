@@ -1,4 +1,4 @@
-package com.creamscript.bulychev
+package com.creamscript.bulychev.activities
 
 import android.content.ComponentName
 import android.content.Context
@@ -8,6 +8,15 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.creamscript.bulychev.*
+import com.creamscript.bulychev.fragments.ContactDetailsFragment
+import com.creamscript.bulychev.fragments.ContactListFragment
+import com.creamscript.bulychev.interfaces.ContactSelectable
+import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver.Companion.CONTACT_ID
+import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver.Companion.FRAGMENT_ID
+import com.creamscript.bulychev.fragments.ContactDetailsFragment.Companion.CONTACT_DETAILS_LAYOUT_ID
+import com.creamscript.bulychev.services.ContactService
+
 
 class MainActivity : AppCompatActivity(), ContactSelectable, ContactService.IService
 {
@@ -17,18 +26,16 @@ class MainActivity : AppCompatActivity(), ContactSelectable, ContactService.ISer
 
     private val connection = object : ServiceConnection {
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            bound = false
-        }
-
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as ContactService.ContactBinder
             contactService = binder.getService()
             bound = true
 
-            if(isCreateMainFragment) {
-                openContactList(R.id.fragment_container, ContactListFragment())
-            }
+            navigateToFragmentByIntent()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            bound = false
         }
     }
 
@@ -68,6 +75,19 @@ class MainActivity : AppCompatActivity(), ContactSelectable, ContactService.ISer
                 .replace(containerViewId, fragment)
                 .addToBackStack(null)
                 .commit()
+    }
+
+    private fun navigateToFragmentByIntent() {
+        val contactDetailsFragment = intent.getStringExtra(FRAGMENT_ID)
+        val contactId = intent.getIntExtra(CONTACT_ID, 0)
+
+        if (contactDetailsFragment == CONTACT_DETAILS_LAYOUT_ID) {
+            openContactDetails(R.id.fragment_container, ContactDetailsFragment.newInstance(contactId.toString()))
+        } else {
+            if(isCreateMainFragment) {
+                openContactList(R.id.fragment_container, ContactListFragment())
+            }
+        }
     }
 
     override fun getService() = contactService

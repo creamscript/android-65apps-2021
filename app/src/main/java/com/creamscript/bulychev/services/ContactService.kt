@@ -1,8 +1,11 @@
-package com.creamscript.bulychev
+package com.creamscript.bulychev.services
 
 import android.app.Service
 import android.content.Intent
 import android.os.*
+import com.creamscript.bulychev.interfaces.ContactDetailsDeliverable
+import com.creamscript.bulychev.interfaces.ContactListDeliverable
+import com.creamscript.bulychev.data.contacts
 import java.lang.ref.WeakReference
 
 

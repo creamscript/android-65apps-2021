@@ -1,14 +1,18 @@
-package com.creamscript.bulychev
+package com.creamscript.bulychev.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.creamscript.bulychev.interfaces.ContactListDeliverable
+import com.creamscript.bulychev.interfaces.ContactSelectable
+import com.creamscript.bulychev.R
+import com.creamscript.bulychev.data.Contact
+import com.creamscript.bulychev.services.ContactService
 
 class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
 
@@ -21,38 +25,35 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
         if (context is ContactSelectable)
             contactSelectable = context
 
-        if (context is ContactService.IService) {
+        if (context is ContactService.IService)
             serviceDeliverable = context
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         (activity as AppCompatActivity)
-                ?.supportActionBar
+                .supportActionBar
                 ?.setTitle(R.string.title_contact_list)
 
         contactListLayout = view.findViewById(R.id.contactListLayout)
-        contactListLayout?.setOnClickListener{
-            contactSelectable?.contactSelected("1")
+        contactListLayout?.setOnClickListener {
+            contactSelectable?.contactSelected("0")
         }
         serviceDeliverable?.getService()?.getContacts(callback)
     }
 
     private val callback = object : ContactListDeliverable {
-        override fun getContactList(list: List<ContactEntity>) {
-            if (requireView() != null) {
-                requireView().post {
-                    val contactPhoto = requireView().findViewById<ImageView>(R.id.contactPhoto)
-                    val contactName = requireView().findViewById<TextView>(R.id.contactName)
-                    val firstPhone = requireView().findViewById<TextView>(R.id.contactPhoneFirst)
+        override fun getContactList(list: List<Contact>) {
+            requireView().post {
+                val contactPhoto = requireView().findViewById<ImageView>(R.id.contactPhoto)
+                val contactName = requireView().findViewById<TextView>(R.id.contactName)
+                val firstPhone = requireView().findViewById<TextView>(R.id.contactPhoneFirst)
 
-                    if (contactName != null) {
-                        contactPhoto.setImageDrawable(ContextCompat.getDrawable(requireContext(), list[0].photoResId))
-                        contactName.text = list[0].contactName
-                        firstPhone.text = list[0].firstPhone
-                    }
+                if (contactName != null) {
+                    contactPhoto.setImageDrawable(ContextCompat.getDrawable(requireContext(), list[0].photoResId))
+                    contactName.text = list[0].contactName
+                    firstPhone.text = list[0].firstPhone
                 }
             }
         }
@@ -68,5 +69,4 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
         serviceDeliverable = null
         super.onDetach()
     }
-
 }

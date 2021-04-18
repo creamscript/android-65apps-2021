@@ -39,7 +39,3 @@
 - цвет для colorPrimary и colorAccent необходимо сгенерировать здесь https://www.random.org/colors/hex на ваш вкус
 - colorPrimaryDark сделать равным colorPrimary
 - в описании к PR указать получившиеся hex цвета
-
-<br>
-
-[частые ошибки при выполнении задания](https://github.com/goblinr/AndroidLessonsCommonMistakes/blob/master/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%BA%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%BE%D0%B2_%D0%B8_%D0%B4%D0%B5%D1%82%D0%B0%D0%BB%D0%B8_%D0%BA%D0%BE%D0%BD%D1%82%D0%B0%D0%BA%D1%82%D0%B0_%D1%82%D0%BE%D0%BB%D1%8C%D0%BA%D0%BE_%D0%B2%D0%B5%D1%80%D1%81%D1%82%D0%BA%D0%B0_%D0%B8_%D0%BD%D0%B0%D0%B2%D0%B8%D0%B3%D0%B0%D1%86%D0%B8%D1%8F.md)
