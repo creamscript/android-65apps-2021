@@ -9,12 +9,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Android65apps2021">
-        <service
-            android:name=".ContactService"
+        <receiver
+            android:name=".receivers.NotifyBroadcastReceiver"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.creamscript.bulychev" />
+            </intent-filter>
+        </receiver>
 
-        <activity android:name=".MainActivity">
+        <service
+            android:name=".services.ContactService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

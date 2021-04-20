@@ -25,6 +25,8 @@ https://65apps.com/education
 - Оформляется PR  из ветки ДЗ в main.
 - Задание в classroom сдается с прикрепленной ссылкой на PR
 
+[Частые ошибки студентов на курсе Android разработки](https://github.com/goblinr/AndroidLessonsCommonMistakes)
+
 Сливать ветку с ДЗ в main самому не надо. Один из списка проверяющих посмотрит PR (они должны быть перечислены в collaborators). И либо оставит замечания либо вмержит.
 
 [ДЗ-1 Создать проект на GitHub](course-files/hw1-create-project-on-github.md)
@@ -32,3 +34,5 @@ https://65apps.com/education
 [ДЗ-2 Список контактов и детали контакта (Только верстка и навигация)](course-files/hw2-make-contact-layout.md)
 
 [ДЗ-3 Выделить привязанный сервис для загрузки списка контактов](course-files/hw3-bind-service-contact-list.md)
+
+[ДЗ-4 Напоминалка о дне рождения контакта](course-files/hw4-birthday-reminder.md)
