@@ -7,11 +7,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.annotation.DrawableRes
 import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver
-import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver.Companion.CONTACT_ID
-import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver.Companion.CONTACT_NAME
 import java.util.*
 
 data class Contact(
+        val contactId: String,
         val contactName: String,
         val firstPhone: String,
         val secondPhone: String,
@@ -19,7 +18,7 @@ data class Contact(
         val secondEmail: String,
         val contactDescription: String,
         @DrawableRes val photoResId: Int,
-        val dateBirthday: Calendar
+        val dateBirthday: String
 ) {
     fun scheduleNotify(context: Context, calendar: Calendar) {
 

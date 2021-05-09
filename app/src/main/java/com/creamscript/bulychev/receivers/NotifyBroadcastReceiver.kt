@@ -1,6 +1,10 @@
 package com.creamscript.bulychev.receivers
 
-import android.app.*
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,11 +13,19 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.creamscript.bulychev.R
 import com.creamscript.bulychev.activities.MainActivity
-import com.creamscript.bulychev.utils.*
+import com.creamscript.bulychev.utils.nextBirthday
+import java.text.SimpleDateFormat
 import java.util.*
+import com.creamscript.bulychev.data.CONTACT_ID
+import com.creamscript.bulychev.data.CONTACT_NAME
+import com.creamscript.bulychev.data.DATE_FORMAT_BIRTHDAY
+import com.creamscript.bulychev.data.FRAGMENT_ID
+
+private const val CHANNEL_ID = "NOTIFY_BIRTHDAY_CHANNEL"
 
 class NotifyBroadcastReceiver : BroadcastReceiver() {
 
+    @SuppressLint("SimpleDateFormat")
     override fun onReceive(context: Context, intent: Intent) {
 
         Log.d("RECEIVER", "onReceive")
@@ -55,7 +67,9 @@ class NotifyBroadcastReceiver : BroadcastReceiver() {
 
         notificationManager.notify(contactId, notification)
 
-        val calendar = nextBirthday(Calendar.getInstance())
+        val currentTime = Date()
+        val dateFormatBirthday= SimpleDateFormat(DATE_FORMAT_BIRTHDAY)
+        val calendar = nextBirthday(dateFormatBirthday.format(currentTime))
 
         val reschedulePendingIntent = PendingIntent.getBroadcast(context, contactId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -67,10 +81,4 @@ class NotifyBroadcastReceiver : BroadcastReceiver() {
         )
     }
 
-    companion object {
-        const val CONTACT_ID = "CONTACT_ID"
-        const val CONTACT_NAME = "CONTACT_NAME"
-        const val FRAGMENT_ID = "FRAGMENT_ID"
-        private const val CHANNEL_ID = "NOTIFY_BIRTHDAY_CHANNEL"
-    }
 }

@@ -36,3 +36,5 @@ https://65apps.com/education
 [ДЗ-3 Выделить привязанный сервис для загрузки списка контактов](course-files/hw3-bind-service-contact-list.md)
 
 [ДЗ-4 Напоминалка о дне рождения контакта](course-files/hw4-birthday-reminder.md)
+
+[ДЗ-5 Загружать контакты в сервисе из поставщика контактов](course-files/hw5-load-from-contact-provider.md)

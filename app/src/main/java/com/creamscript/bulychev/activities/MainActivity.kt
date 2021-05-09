@@ -8,15 +8,14 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.creamscript.bulychev.*
+import com.creamscript.bulychev.R
 import com.creamscript.bulychev.fragments.ContactDetailsFragment
 import com.creamscript.bulychev.fragments.ContactListFragment
 import com.creamscript.bulychev.interfaces.ContactSelectable
-import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver.Companion.CONTACT_ID
-import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver.Companion.FRAGMENT_ID
-import com.creamscript.bulychev.fragments.ContactDetailsFragment.Companion.CONTACT_DETAILS_LAYOUT_ID
 import com.creamscript.bulychev.services.ContactService
-
+import com.creamscript.bulychev.data.CONTACT_ID
+import com.creamscript.bulychev.data.FRAGMENT_ID
+import com.creamscript.bulychev.data.CONTACT_DETAILS_LAYOUT_ID
 
 class MainActivity : AppCompatActivity(), ContactSelectable, ContactService.IService
 {
@@ -91,4 +90,5 @@ class MainActivity : AppCompatActivity(), ContactSelectable, ContactService.ISer
     }
 
     override fun getService() = contactService
+
 }

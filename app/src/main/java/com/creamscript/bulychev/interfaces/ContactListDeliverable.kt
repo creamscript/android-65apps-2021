@@ -1,7 +1,7 @@
 package com.creamscript.bulychev.interfaces
 
-import com.creamscript.bulychev.data.Contact
+import com.creamscript.bulychev.data.SimpleContact
 
 interface ContactListDeliverable {
-    fun getContactList(list: List<Contact>)
+    fun getContactList(list: List<SimpleContact>)
 }

@@ -1,13 +1,27 @@
 package com.creamscript.bulychev.utils
 
+import android.annotation.SuppressLint
+import com.creamscript.bulychev.data.DATE_FORMAT_BIRTHDAY
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
-fun nextBirthday(calendar: Calendar): Calendar {
+@SuppressLint("SimpleDateFormat")
+fun nextBirthday(date: String): Calendar {
 
     /*
     * Возвращает календарь, на какое поставить следующее напоминание.
     * В случае, если выпадает на 29.02 в не високосный год возращает 28.02
     */
+
+    val calendar = Calendar.getInstance()
+    val dateFormatBirthday = SimpleDateFormat(DATE_FORMAT_BIRTHDAY)
+
+    try {
+        calendar.time = dateFormatBirthday.parse(date)
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
 
     val calendarNotify = calendar as GregorianCalendar
     var isFeb29  = false
