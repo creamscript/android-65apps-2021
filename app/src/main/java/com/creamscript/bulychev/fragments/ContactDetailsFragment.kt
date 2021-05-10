@@ -1,7 +1,9 @@
 package com.creamscript.bulychev.fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -13,8 +15,8 @@ import com.creamscript.bulychev.R
 import com.creamscript.bulychev.data.Contact
 import com.creamscript.bulychev.interfaces.ContactDetailsDeliverable
 import com.creamscript.bulychev.services.ContactService
-import java.util.*
 import com.creamscript.bulychev.utils.*
+import com.creamscript.bulychev.data.REQUEST_CODE_READ_CONTACTS
 
 class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCheckedChangeListener
 {
@@ -41,7 +43,14 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
         switchAlarm = requireView().findViewById<Switch>(R.id.contactDetailsSwitchBirthday)
         switchAlarm?.setOnCheckedChangeListener(this)
 
-        serviceDeliverable?.getService()?.getContact(callback, 0)
+        val hasReadContactPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS);
+        if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
+            serviceDeliverable?.getService()?.getContact(callback, "2")
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS),
+                REQUEST_CODE_READ_CONTACTS
+            )
+        }
     }
 
     override fun onDestroyView() {
@@ -94,17 +103,30 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
                     firstEmail.text = contact.firstEmail
                     secondEmail.text = contact.secondEmail
                     contactDescription.text = contact.contactDescription
-                    birthdayDate.text = contact.dateBirthday.get(Calendar.DATE).toString() + "." +
-                                        contact.dateBirthday.get(Calendar.MONTH).toString() + "." +
-                                        contact.dateBirthday.get(Calendar.YEAR).toString()
+                    birthdayDate.text = contact.dateBirthday
                     if (contact.isAlarmSet(requireContext())) switchNotify.isChecked = true
                 }
             }
         }
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_CODE_READ_CONTACTS ->
+                if (grantResults.isNotEmpty()
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    serviceDeliverable?.getService()?.getContact(callback, "2")
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.msg_deny_permission_contacts,
+                        Toast.LENGTH_LONG).show()
+                }
+        }
+    }
+
     companion object {
-        const val CONTACT_DETAILS_LAYOUT_ID = "contactDetailsLayout"
         private const val ARG_CONTACT_ID = "id"
 
         fun newInstance(id: String): ContactDetailsFragment {
