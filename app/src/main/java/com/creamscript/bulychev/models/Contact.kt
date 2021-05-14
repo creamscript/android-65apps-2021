@@ -1,4 +1,4 @@
-package com.creamscript.bulychev.data
+package com.creamscript.bulychev.models
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.annotation.DrawableRes
-import com.creamscript.bulychev.receivers.NotifyBroadcastReceiver
+import com.creamscript.bulychev.CONTACT_ID
+import com.creamscript.bulychev.CONTACT_NAME
+import com.creamscript.bulychev.NotifyBroadcastReceiver
 import java.util.*
 
 data class Contact(

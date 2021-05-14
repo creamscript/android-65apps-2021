@@ -1,4 +1,4 @@
-package com.creamscript.bulychev.receivers
+package com.creamscript.bulychev
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -11,15 +11,10 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.creamscript.bulychev.R
-import com.creamscript.bulychev.activities.MainActivity
-import com.creamscript.bulychev.utils.nextBirthday
+import com.creamscript.bulychev._utils.nextBirthday
+import com.creamscript.bulychev.views.MainActivity
 import java.text.SimpleDateFormat
 import java.util.*
-import com.creamscript.bulychev.data.CONTACT_ID
-import com.creamscript.bulychev.data.CONTACT_NAME
-import com.creamscript.bulychev.data.DATE_FORMAT_BIRTHDAY
-import com.creamscript.bulychev.data.FRAGMENT_ID
 
 private const val CHANNEL_ID = "NOTIFY_BIRTHDAY_CHANNEL"
 
@@ -43,7 +38,7 @@ class NotifyBroadcastReceiver : BroadcastReceiver() {
         }
 
         val notificationIntent = Intent(context, MainActivity::class.java)
-        notificationIntent.putExtra(FRAGMENT_ID, "contactDetailsLayout");
+        notificationIntent.putExtra(FRAGMENT_ID, CONTACT_DETAILS_FRAG_ID);
 
         val pendingIntent = PendingIntent.getActivity(
                                 context,
