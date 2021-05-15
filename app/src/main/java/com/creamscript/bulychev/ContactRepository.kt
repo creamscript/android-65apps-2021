@@ -1,60 +1,38 @@
-package com.creamscript.bulychev.services
+package com.creamscript.bulychev
 
-import android.app.Service
-import android.content.Intent
 import android.net.Uri
-import android.os.Binder
-import android.os.IBinder
 import android.provider.ContactsContract
-import com.creamscript.bulychev.R
-import com.creamscript.bulychev.data.Contact
-import com.creamscript.bulychev.data.SimpleContact
-import com.creamscript.bulychev.interfaces.ContactDetailsDeliverable
-import com.creamscript.bulychev.interfaces.ContactListDeliverable
-import java.lang.ref.WeakReference
-import java.util.*
+import android.content.Context
+import com.creamscript.bulychev.models.Contact
+import com.creamscript.bulychev.models.SimpleContact
 
 private const val PHONE = "PHONE"
 private const val EMAIL = "EMAIL"
 private const val DESCRIPTION = "DESCRIPTION"
 private const val BIRTHDAY = "BIRTHDAY"
 
-class ContactService : Service() {
+class ContactRepository {
 
-    private val binder = ContactBinder()
-
-    fun getContacts(callback: ContactListDeliverable) {
-        val weakReferenceCallback = WeakReference(callback)
-        Thread {
-            weakReferenceCallback.get()?.getContactList(getContacts())
-        }.start()
-    }
-
-    fun getContact(callback: ContactDetailsDeliverable, id: String) {
-        val weakReferenceCallback = WeakReference(callback)
-        Thread {
-            weakReferenceCallback.get()?.getContactDetails(getContact(id))
-        }.start()
-    }
-
-    private fun getContacts() : List<SimpleContact> {
+    fun getContacts(context: Context): List<SimpleContact> {
         val contactList: MutableList<SimpleContact> = mutableListOf()
-        val cursor = contentResolver.query(
-                        ContactsContract.Contacts.CONTENT_URI,
-                        null,
-                        null,
-                        null,
-                        null)
+        val cursor = context.contentResolver.query(
+            ContactsContract.Contacts.CONTENT_URI,
+            null,
+            null,
+            null,
+            null)
 
         cursor.use { cursor ->
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    contactList.add(SimpleContact(
+                    contactList.add(
+                        SimpleContact(
                             cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID)),
                             cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)),
-                            getContactContact(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID)), PHONE, 0),
+                            getContactContact(context, cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID)), PHONE, 0),
                             R.drawable.duckduckgo
-                    ))
+                        )
+                    )
                 }
             }
         }
@@ -62,18 +40,18 @@ class ContactService : Service() {
         return contactList
     }
 
-    private fun getContact(id: String) : Contact {
+    fun getContact(context: Context, id: String) : Contact {
         var contact = Contact("0", "", "","",
-                "","","",
-                R.drawable.ic_android_black_96dp, ""
+            "","","",
+            R.drawable.ic_android_black_96dp, ""
         )
 
-        val cursor = contentResolver.query(
-                        ContactsContract.Contacts.CONTENT_URI,
-                        null,
-                        ContactsContract.Contacts._ID + " = ?",
-                        arrayOf(id),
-                        null)
+        val cursor = context.contentResolver.query(
+            ContactsContract.Contacts.CONTENT_URI,
+            null,
+            ContactsContract.Contacts._ID + " = ?",
+            arrayOf(id),
+            null)
 
         cursor.use { cursor ->
             if (cursor != null) {
@@ -81,13 +59,13 @@ class ContactService : Service() {
                     contact = Contact(
                         id,
                         cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)),
-                        getContactContact(id, PHONE, 0),
-                        getContactContact(id, PHONE, 1),
-                        getContactContact(id, EMAIL, 0),
-                        getContactContact(id, EMAIL, 1),
-                        getContactContact(id, DESCRIPTION, 0),
+                        getContactContact(context, id, PHONE, 0),
+                        getContactContact(context, id, PHONE, 1),
+                        getContactContact(context, id, EMAIL, 0),
+                        getContactContact(context, id, EMAIL, 1),
+                        getContactContact(context, id, DESCRIPTION, 0),
                         R.drawable.duckduckgo,
-                        getContactContact(id, BIRTHDAY, 0)
+                        getContactContact(context, id, BIRTHDAY, 0)
                     )
                 }
             }
@@ -96,7 +74,7 @@ class ContactService : Service() {
         return contact
     }
 
-    private fun getContactContact(id: String, field: String, num: Int): String {
+    private fun getContactContact(context: Context, id: String, field: String, num: Int): String {
         var result = ""
         var countNum = 0
 
@@ -139,12 +117,12 @@ class ContactService : Service() {
             }
         }
 
-        val cursor = contentResolver.query(
-                        uriParam,
-                        null,
-                        selectionParam,
-                        selectionArgsParam,
-                        null
+        val cursor = context.contentResolver.query(
+            uriParam,
+            null,
+            selectionParam,
+            selectionArgsParam,
+            null
         )
 
         cursor.use { cursor ->
@@ -159,18 +137,6 @@ class ContactService : Service() {
         }
 
         return result
-    }
-
-    override fun onBind(intent: Intent): IBinder {
-        return binder
-    }
-
-    inner class ContactBinder : Binder() {
-        fun getService(): ContactService = this@ContactService
-    }
-
-    interface IService {
-        fun getService(): ContactService?
     }
 
 }

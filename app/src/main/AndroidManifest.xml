@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android65apps2021">
         <receiver
-            android:name=".receivers.NotifyBroadcastReceiver"
+            android:name=".NotifyBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -22,11 +22,11 @@
         </receiver>
 
         <service
-            android:name=".services.ContactService"
+            android:name=".ContactService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

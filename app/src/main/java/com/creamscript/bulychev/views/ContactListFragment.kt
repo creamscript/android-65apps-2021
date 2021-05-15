@@ -1,4 +1,4 @@
-package com.creamscript.bulychev.fragments
+package com.creamscript.bulychev.views
 
 import android.Manifest
 import android.content.Context
@@ -11,16 +11,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.creamscript.bulychev.R
-import com.creamscript.bulychev.interfaces.ContactListDeliverable
-import com.creamscript.bulychev.interfaces.ContactSelectable
-import com.creamscript.bulychev.services.ContactService
-import com.creamscript.bulychev.data.REQUEST_CODE_READ_CONTACTS
-import com.creamscript.bulychev.data.SimpleContact
+import com.creamscript.bulychev.REQUEST_CODE_READ_CONTACTS
+import com.creamscript.bulychev.models.SimpleContact
+import com.creamscript.bulychev.viewmodels.ContactListViewModel
 
 class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
 
-    private var serviceDeliverable: ContactService.IService? = null
+    private var contactListViewModel: ContactListViewModel? = null
     private var contactSelectable: ContactSelectable? = null
     private var contactListLayout: View? = null
 
@@ -28,9 +27,11 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
         super.onAttach(context)
         if (context is ContactSelectable)
             contactSelectable = context
+    }
 
-        if (context is ContactService.IService)
-            serviceDeliverable = context
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        contactListViewModel = ViewModelProvider(this).get(ContactListViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,30 +43,18 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
 
         contactListLayout = view.findViewById(R.id.contactListLayout)
         contactListLayout?.setOnClickListener {
-            contactSelectable?.contactSelected("0")
+            contactSelectable?.contactSelected("1")
         }
 
         val hasReadContactPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS);
         if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
-            serviceDeliverable?.getService()?.getContacts(callback)
+            contactListViewModel?.loadContactList(requireContext())
+            contactListViewModel
+                ?.getContactList()
+                ?.observe(viewLifecycleOwner, { postContactToList(it[0]) })
+
         } else {
             requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS), REQUEST_CODE_READ_CONTACTS)
-        }
-    }
-
-    private val callback = object : ContactListDeliverable {
-        override fun getContactList(list: List<SimpleContact>) {
-            requireView().post {
-                val contactPhoto = requireView().findViewById<ImageView>(R.id.contactPhoto)
-                val contactName = requireView().findViewById<TextView>(R.id.contactName)
-                val firstPhone = requireView().findViewById<TextView>(R.id.contactPhoneFirst)
-
-                if (contactName != null) {
-                    contactPhoto.setImageDrawable(ContextCompat.getDrawable(requireContext(), list[0].photoResId))
-                    contactName.text = list[0].contactName
-                    firstPhone.text = list[0].firstPhone
-                }
-            }
         }
     }
 
@@ -76,7 +65,6 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
 
     override fun onDetach() {
         contactSelectable = null
-        serviceDeliverable = null
         super.onDetach()
     }
 
@@ -86,13 +74,34 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
             REQUEST_CODE_READ_CONTACTS ->
                 if (grantResults.isNotEmpty()
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    serviceDeliverable?.getService()?.getContacts(callback)
+                    contactListViewModel?.loadContactList(requireContext())
+                    contactListViewModel
+                        ?.getContactList()
+                        ?.observe(viewLifecycleOwner, { postContactToList(it[0]) })
+
                 } else {
                     Toast.makeText(
                             requireContext(),
                             R.string.msg_deny_permission_contacts,
                             Toast.LENGTH_LONG).show()
                 }
+        }
+    }
+
+    private fun postContactToList(simpleContact: SimpleContact) {
+        val contactPhoto = requireView().findViewById<ImageView>(R.id.contactPhoto)
+        val contactName = requireView().findViewById<TextView>(R.id.contactName)
+        val firstPhone = requireView().findViewById<TextView>(R.id.contactPhoneFirst)
+
+        if (contactName != null) {
+            contactPhoto.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    simpleContact.photoResId
+                )
+            )
+            contactName.text = simpleContact.contactName
+            firstPhone.text = simpleContact.firstPhone
         }
     }
 }

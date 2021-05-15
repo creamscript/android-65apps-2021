@@ -1,4 +1,4 @@
-package com.creamscript.bulychev.data
+package com.creamscript.bulychev.models
 
 import androidx.annotation.DrawableRes
 

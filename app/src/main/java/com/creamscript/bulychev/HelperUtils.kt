@@ -1,7 +1,7 @@
-package com.creamscript.bulychev.utils
+package com.creamscript.bulychev._utils
 
 import android.annotation.SuppressLint
-import com.creamscript.bulychev.data.DATE_FORMAT_BIRTHDAY
+import com.creamscript.bulychev.DATE_FORMAT_BIRTHDAY
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
