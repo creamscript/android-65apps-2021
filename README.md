@@ -40,3 +40,5 @@ https://65apps.com/education
 [ДЗ-5 Загружать контакты в сервисе из поставщика контактов](course-files/hw5-load-from-contact-provider.md)
 
 [ДЗ-6 Рефакторинг проекта по паттерну проектирования MVVM](course-files/hw6-refactoring-to-mvvm.md)
+
+[ДЗ-7 Переделать экран списка контактов на RecyclerView](course-files/hw7-redesign-using-recyclerview.md)

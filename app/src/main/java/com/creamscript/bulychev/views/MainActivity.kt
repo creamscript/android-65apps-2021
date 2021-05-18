@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.creamscript.bulychev.*
+import com.creamscript.bulychev.models.SimpleContact
 
 class MainActivity : AppCompatActivity(), ContactSelectable
 {
@@ -18,8 +19,8 @@ class MainActivity : AppCompatActivity(), ContactSelectable
         navigateToFragmentByIntent()
     }
 
-    override fun contactSelected(id: String) {
-        openContactDetails(R.id.fragment_container, ContactDetailsFragment.newInstance(id))
+    override fun contactSelected(simpleContact: SimpleContact) {
+        openContactDetails(R.id.fragment_container, ContactDetailsFragment.newInstance(simpleContact.contactId))
     }
 
     private fun openContactList(containerViewId: Int, fragment: Fragment) {

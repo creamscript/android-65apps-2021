@@ -13,14 +13,21 @@ private const val BIRTHDAY = "BIRTHDAY"
 
 class ContactRepository {
 
-    fun getContacts(context: Context): List<SimpleContact> {
+    fun getContacts(context: Context, query: String?): List<SimpleContact> {
         val contactList: MutableList<SimpleContact> = mutableListOf()
+        var selectionParamContacts: String? = null
+
+        if (query != null) {
+            selectionParamContacts = ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " LIKE \'%" + query + "%\'"
+        }
+
         val cursor = context.contentResolver.query(
-            ContactsContract.Contacts.CONTENT_URI,
-            null,
-            null,
-            null,
-            null)
+                ContactsContract.Contacts.CONTENT_URI,
+                null,
+                selectionParamContacts,
+                null,
+                null)
+
 
         cursor.use { cursor ->
             if (cursor != null) {

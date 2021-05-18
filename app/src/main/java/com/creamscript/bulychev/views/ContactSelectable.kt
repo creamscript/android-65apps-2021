@@ -1,5 +1,7 @@
 package com.creamscript.bulychev.views
 
+import com.creamscript.bulychev.models.SimpleContact
+
 interface ContactSelectable {
-    fun contactSelected(id: String)
+    fun contactSelected(simpleContact: SimpleContact)
 }

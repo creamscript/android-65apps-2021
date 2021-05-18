@@ -24,6 +24,9 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
     private var contactDetailsViewModel: ContactDetailsViewModel? = null
 
     private lateinit var contactDetails: Contact
+    private val contactId: String by lazy {
+        requireArguments().getString(ARG_CONTACT_ID, "1")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +45,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
 
         val hasReadContactPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS);
         if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
-            contactDetailsViewModel?.loadContact(requireContext(), "1")
+            contactDetailsViewModel?.loadContact(requireContext(), contactId)
             contactDetailsViewModel
                 ?.getContact()
                 ?.observe(viewLifecycleOwner, { postContactToDetails(it) })
@@ -76,7 +79,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
             REQUEST_CODE_READ_CONTACTS ->
                 if (grantResults.isNotEmpty()
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    contactDetailsViewModel?.loadContact(requireContext(), "1")
+                    contactDetailsViewModel?.loadContact(requireContext(), contactId)
                     contactDetailsViewModel
                         ?.getContact()
                         ?.observe(viewLifecycleOwner, { postContactToDetails(it) })
@@ -89,6 +92,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
         }
     }
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun postContactToDetails (contact: Contact) {
         contactDetails = contact
         val contactPhoto = requireView().findViewById<ImageView>(R.id.contactDetailsPhoto)
@@ -102,12 +106,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
         val switchNotify = requireView().findViewById<Switch>(R.id.contactDetailsSwitchBirthday)
 
         if(contactName != null) {
-            contactPhoto.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    contact.photoResId
-                )
-            )
+            contactPhoto.setImageResource(contact.photoResId)
             contactName.text = contact.contactName
             firstPhone.text = contact.firstPhone
             secondPhone.text = contact.secondPhone
