@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.creamscript.bulychev.ContactRepository
 import com.creamscript.bulychev.models.SimpleContact
 
-class ContactListViewModel : ViewModel() {
+class ContactListViewModel: ViewModel() {
     private val contactRepository = ContactRepository()
     private val contactList = MutableLiveData<List<SimpleContact>>()
 
@@ -15,10 +15,9 @@ class ContactListViewModel : ViewModel() {
         return contactList
     }
 
-    fun loadContactList(context: Context) {
+    fun loadContactList(context: Context, query: String?) {
         Thread {
-            contactList.postValue(contactRepository.getContacts(context))
+            contactList.postValue(contactRepository.getContacts(context, query))
         }.start()
     }
-
 }

@@ -12,5 +12,6 @@
     <string name="notify_birthday">Уведомлять о дне рождении</string>
     <string name="text_notify_birthday">Сегодня день рождение у</string>
     <string name="msg_deny_permission_contacts">Разрешите доступ к контактам</string>
+    <string name="title_search">Поиск</string>
 
 </resources>

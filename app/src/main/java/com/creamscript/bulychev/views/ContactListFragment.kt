@@ -4,24 +4,28 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.creamscript.bulychev.R
 import com.creamscript.bulychev.REQUEST_CODE_READ_CONTACTS
-import com.creamscript.bulychev.models.SimpleContact
 import com.creamscript.bulychev.viewmodels.ContactListViewModel
 
-class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
+class ContactListFragment : Fragment(R.layout.fragment_contact_list),
+    SearchView.OnQueryTextListener {
 
     private var contactListViewModel: ContactListViewModel? = null
     private var contactSelectable: ContactSelectable? = null
-    private var contactListLayout: View? = null
+    private var contactListRecyclerView: RecyclerView? = null
+    private var contactsAdapter: ContactsAdapter? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -31,6 +35,8 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+
         contactListViewModel = ViewModelProvider(this).get(ContactListViewModel::class.java)
     }
 
@@ -41,31 +47,53 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
                 .supportActionBar
                 ?.setTitle(R.string.title_contact_list)
 
-        contactListLayout = view.findViewById(R.id.contactListLayout)
-        contactListLayout?.setOnClickListener {
-            contactSelectable?.contactSelected("1")
-        }
+        contactsAdapter = ContactsAdapter { simpleContact -> contactSelectable?.contactSelected(simpleContact) }
+        contactListRecyclerView = view.findViewById(R.id.recyclerViewForContactList)
+        contactListRecyclerView?.addItemDecoration(SimpleOffsetItemDecoration(10))
+        contactListRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
+        contactListRecyclerView?.adapter = contactsAdapter
 
         val hasReadContactPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS);
         if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
-            contactListViewModel?.loadContactList(requireContext())
+            contactListViewModel?.loadContactList(requireContext(), null)
             contactListViewModel
                 ?.getContactList()
-                ?.observe(viewLifecycleOwner, { postContactToList(it[0]) })
+                ?.observe(viewLifecycleOwner, {
+                    it?.let {
+                        contactsAdapter?.submitList(it)
+                    }
+                })
 
         } else {
             requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS), REQUEST_CODE_READ_CONTACTS)
         }
     }
 
-    override fun onDestroyView() {
-        contactListLayout = null
-        super.onDestroyView()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_list_search, menu)
+
+        val search = menu.findItem(R.id.menu_search)
+        val searchView = search.actionView as? SearchView
+        searchView?.isSubmitButtonEnabled = true
+        searchView?.setOnQueryTextListener(this)
     }
 
-    override fun onDetach() {
-        contactSelectable = null
-        super.onDetach()
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if (query != null) {
+            searchContacts(query)
+        }
+        return true
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        if (query != null) {
+            searchContacts(query)
+        }
+        return true
+    }
+
+    private fun searchContacts(query: String) {
+        contactListViewModel?.loadContactList(requireContext(), query)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
@@ -74,10 +102,14 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
             REQUEST_CODE_READ_CONTACTS ->
                 if (grantResults.isNotEmpty()
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    contactListViewModel?.loadContactList(requireContext())
+                    contactListViewModel?.loadContactList(requireContext(), null)
                     contactListViewModel
                         ?.getContactList()
-                        ?.observe(viewLifecycleOwner, { postContactToList(it[0]) })
+                        ?.observe(viewLifecycleOwner, {
+                            it?.let {
+                                contactsAdapter?.submitList(it)
+                            }
+                        })
 
                 } else {
                     Toast.makeText(
@@ -88,20 +120,14 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list) {
         }
     }
 
-    private fun postContactToList(simpleContact: SimpleContact) {
-        val contactPhoto = requireView().findViewById<ImageView>(R.id.contactPhoto)
-        val contactName = requireView().findViewById<TextView>(R.id.contactName)
-        val firstPhone = requireView().findViewById<TextView>(R.id.contactPhoneFirst)
+    override fun onDestroyView() {
+        contactListRecyclerView?.adapter = null
+        contactListRecyclerView?.layoutManager = null
+        super.onDestroyView()
+    }
 
-        if (contactName != null) {
-            contactPhoto.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    simpleContact.photoResId
-                )
-            )
-            contactName.text = simpleContact.contactName
-            firstPhone.text = simpleContact.firstPhone
-        }
+    override fun onDetach() {
+        contactSelectable = null
+        super.onDetach()
     }
 }
