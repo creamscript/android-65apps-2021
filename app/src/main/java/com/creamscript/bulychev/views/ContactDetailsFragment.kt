@@ -22,6 +22,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private var switchAlarm: Switch? = null
     private var contactDetailsViewModel: ContactDetailsViewModel? = null
+    private var progressBarForContactDetails: ProgressBar? = null
 
     private lateinit var contactDetails: Contact
     private val contactId: String by lazy {
@@ -40,8 +41,20 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
             .supportActionBar
                 ?.setTitle(R.string.title_contact_details)
 
+        progressBarForContactDetails = view.findViewById(R.id.progressBarForContactDetails)
         switchAlarm = requireView().findViewById<Switch>(R.id.contactDetailsSwitchBirthday)
         switchAlarm?.setOnCheckedChangeListener(this)
+
+        contactDetailsViewModel
+            ?.getLoadingStatus()
+            ?.observe(viewLifecycleOwner, {
+                it?.let {
+                    when(it) {
+                        true -> progressBarForContactDetails?.visibility = View.VISIBLE
+                        false -> progressBarForContactDetails?.visibility = View.GONE
+                    }
+                }
+            })
 
         val hasReadContactPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS);
         if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
@@ -57,6 +70,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details), OnCh
     }
 
     override fun onDestroyView() {
+        progressBarForContactDetails = null
         switchAlarm = null
         super.onDestroyView()
     }

@@ -5,6 +5,9 @@ import android.provider.ContactsContract
 import android.content.Context
 import com.creamscript.bulychev.models.Contact
 import com.creamscript.bulychev.models.SimpleContact
+import io.reactivex.rxjava3.core.Single
+
+//import java.util.concurrent.TimeUnit
 
 private const val PHONE = "PHONE"
 private const val EMAIL = "EMAIL"
@@ -13,7 +16,16 @@ private const val BIRTHDAY = "BIRTHDAY"
 
 class ContactRepository {
 
-    fun getContacts(context: Context, query: String?): List<SimpleContact> {
+    fun getContacts(context: Context, query: String?): Single<List<SimpleContact>> =
+        Single.fromCallable { getContactsByQuery(context, query) }
+
+    fun getContact(context: Context, id: String): Single<Contact> =
+        Single.fromCallable { getContactById(context, id) }
+
+    private fun getContactsByQuery(context: Context, query: String?): List<SimpleContact> {
+
+        //TimeUnit.SECONDS.sleep(1); // mock загрузки
+
         val contactList: MutableList<SimpleContact> = mutableListOf()
         var selectionParamContacts: String? = null
 
@@ -27,7 +39,6 @@ class ContactRepository {
                 selectionParamContacts,
                 null,
                 null)
-
 
         cursor.use { cursor ->
             if (cursor != null) {
@@ -47,7 +58,10 @@ class ContactRepository {
         return contactList
     }
 
-    fun getContact(context: Context, id: String) : Contact {
+    private fun getContactById(context: Context, id: String) : Contact {
+
+        //TimeUnit.SECONDS.sleep(1); // mock загрузки
+
         var contact = Contact("0", "", "","",
             "","","",
             R.drawable.ic_android_black_96dp, ""
