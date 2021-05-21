@@ -42,3 +42,5 @@ https://65apps.com/education
 [ДЗ-6 Рефакторинг проекта по паттерну проектирования MVVM](course-files/hw6-refactoring-to-mvvm.md)
 
 [ДЗ-7 Переделать экран списка контактов на RecyclerView](course-files/hw7-redesign-using-recyclerview.md)
+
+[ДЗ-8 Рефакторинг существующего приложения с использованием RxJava](course-files/hw8-refactoring-app-using-rxjava.md)

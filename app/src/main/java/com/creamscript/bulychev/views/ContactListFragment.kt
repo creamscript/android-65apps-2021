@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -26,6 +27,7 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list),
     private var contactSelectable: ContactSelectable? = null
     private var contactListRecyclerView: RecyclerView? = null
     private var contactsAdapter: ContactsAdapter? = null
+    private var progressBarForContactList: ProgressBar? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -47,11 +49,24 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list),
                 .supportActionBar
                 ?.setTitle(R.string.title_contact_list)
 
+        progressBarForContactList = view.findViewById(R.id.progressBarForContactList)
+
         contactsAdapter = ContactsAdapter { simpleContact -> contactSelectable?.contactSelected(simpleContact) }
         contactListRecyclerView = view.findViewById(R.id.recyclerViewForContactList)
         contactListRecyclerView?.addItemDecoration(SimpleOffsetItemDecoration(10))
         contactListRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
         contactListRecyclerView?.adapter = contactsAdapter
+
+        contactListViewModel
+            ?.getLoadingStatus()
+            ?.observe(viewLifecycleOwner, {
+                    it?.let {
+                        when(it) {
+                            true -> progressBarForContactList?.visibility = View.VISIBLE
+                            false -> progressBarForContactList?.visibility = View.GONE
+                        }
+                    }
+            })
 
         val hasReadContactPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_CONTACTS);
         if (hasReadContactPermission == PackageManager.PERMISSION_GRANTED) {
@@ -121,6 +136,7 @@ class ContactListFragment : Fragment(R.layout.fragment_contact_list),
     }
 
     override fun onDestroyView() {
+        progressBarForContactList = null
         contactListRecyclerView?.adapter = null
         contactListRecyclerView?.layoutManager = null
         super.onDestroyView()
